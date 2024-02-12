@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "684051928464",
+    "project_id": "izichat-ff340",
+    "storage_bucket": "izichat-ff340.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684051928464:android:8fad05911cba33cc1a8f15",
+        "android_client_info": {
+          "package_name": "com.example.izipizi_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "684051928464-ebt7ds3hobdg950ip0tj267l4bir2p9v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.izipizi_chat",
+            "certificate_hash": "541253f6460351c428d33431c232bdf155e1c055"
+          }
+        },
+        {
+          "client_id": "684051928464-il4art4rtu96h2hsrh4mabl0i92vb1ef.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARwdCNYv1hYTCk3oEOpVOffs6ScZbVoDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "684051928464-il4art4rtu96h2hsrh4mabl0i92vb1ef.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "684051928464-ire29g7f6dsp8fm4u0gi4poelvnogl2g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.izipiziChat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
