@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 abstract class PalletColors {
   static const Color cBG = Color.fromRGBO(22, 25, 30, 1);
-  static const Color cBGContainer = Color.fromRGBO(28, 32, 34, 1);
+  static const Color cBGContainer = Color.fromRGBO(25, 29, 34, 1);
   static const Color cWhite = Color.fromRGBO(255, 255, 255, 1);
   static const Color cGray = Color.fromRGBO(196, 203, 221, 1);
   static const Color cGrayText = Color.fromRGBO(151, 151, 157, 1);
+  static const Color cGrayField = Color.fromRGBO(32, 36, 43, 1);
   static const Color cCyan600 = Color.fromRGBO(4, 179, 239, 1);
 }
 

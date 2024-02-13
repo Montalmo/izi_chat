@@ -16,8 +16,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<ChatUser> chatUsers = [];
-  final List<ChatUser> searchUsers = [];
+  final TextEditingController controller = TextEditingController();
+  late List<ChatUser> chatUsers;
+  List<ChatUser> searchUsers = [];
   bool _isSearching = false;
 
   @override
@@ -37,10 +38,49 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: PalletColors.cCyan600,
               ),
         title: _isSearching
-            ? const TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  filled: true
+            ? TextField(
+                controller: controller,
+                //searching logic
+                onChanged: (val) {
+                  //search logic
+                  searchUsers.clear();
+                  for (var i in chatUsers) {
+                    if (i.name.toLowerCase().contains(val.toLowerCase()) ||
+                        i.email.toLowerCase().contains(val.toLowerCase())) {
+                      searchUsers.add(i);
+                      setState(() {
+                        searchUsers;
+                      });
+                    }
+                  }
+                },
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
+                decoration: const InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(
+                        14.0,
+                      ),
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: 12,
+                  ),
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: PalletColors.cGrayField,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(
+                        14.0,
+                      ),
+                    ),
+                  ),
                 ),
               )
             : const Text('IZIChat'),
@@ -82,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
               case ConnectionState.done:
                 final data = snapshot.data?.docs;
 
-                List chatUsers = data
+                chatUsers = data
                         ?.map(
                           (e) => ChatUser.fromJson(
                             e.data(),
@@ -97,10 +137,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                         ),
-                        itemCount: chatUsers.length,
+                        itemCount: _isSearching
+                            ? searchUsers.length
+                            : chatUsers.length,
                         itemBuilder: (context, index) {
                           return ChatUserCard(
-                            user: chatUsers[index],
+                            user: _isSearching
+                                ? searchUsers[index]
+                                : chatUsers[index],
                           );
                         },
                       )
@@ -114,7 +158,9 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          print(chatUsers[0].name);
+        },
         child: const Icon(Icons.add_comment_outlined),
       ),
     );
