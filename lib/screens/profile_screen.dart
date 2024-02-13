@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../api/api.dart';
@@ -20,6 +23,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  String? currentImage;
 
   @override
   Widget build(BuildContext context) {
@@ -44,23 +48,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(24.0),
-                    child: currentChatUser.image != ''
-                        ? CachedNetworkImage(
-                            fit: BoxFit.fill,
+                  currentImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            14.0,
+                          ),
+                          child: SizedBox(
                             width: 120,
                             height: 120,
-                            imageUrl: currentChatUser.image,
-                            placeholder: (context, url) =>
-                                const CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                SvgPicture.asset('assets/svgs/def_avatar.svg'),
-                          )
-                        : SvgPicture.asset('assets/svgs/def_avatar.svg'),
-                  ),
+                            child: Image.file(
+                              File(currentImage as String),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(24.0),
+                          child: currentChatUser.image != ''
+                              ? CachedNetworkImage(
+                                  fit: BoxFit.fill,
+                                  width: 120,
+                                  height: 120,
+                                  imageUrl: currentChatUser.image,
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      SvgPicture.asset(
+                                          'assets/svgs/def_avatar.svg'),
+                                )
+                              : SvgPicture.asset('assets/svgs/def_avatar.svg'),
+                        ),
                   IconButton.filled(
-                    onPressed: () {},
+                    onPressed: () {
+                      showBottomSheet();
+                    },
                     icon: const Icon(
                       Icons.edit,
                     ),
@@ -158,5 +179,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+  void showBottomSheet() {
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(14.0), topRight: Radius.circular(14.0)),
+        ),
+        context: context,
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              top: 16.0,
+              bottom: 64,
+            ),
+            children: [
+              const Text(
+                'Pick profile picture',
+                style: PalletTextStyles.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 16.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? photo =
+                          await picker.pickImage(source: ImageSource.camera);
+                      if (photo != null) {
+                        setState(() {
+                          currentImage = photo.path;
+                        });
+                      }
+                      if (!context.mounted) return;
+                      Navigator.of(context).pop();
+                    },
+                    icon: SizedBox(
+                        width: 56,
+                        height: 56,
+                        child: Image.asset('assets/images/camera_icon.png')),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      // Pick an image.
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        setState(() {
+                          currentImage = image.path;
+                        });
+                      }
+                      if (!context.mounted) return;
+                      Navigator.of(context).pop();
+                    },
+                    icon: SizedBox(
+                        width: 56,
+                        height: 56,
+                        child: Image.asset('assets/images/file_pic_icon.png')),
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }
