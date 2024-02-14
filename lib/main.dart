@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:izipizi_chat/screens/profile_screen.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';

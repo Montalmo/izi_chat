@@ -212,15 +212,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   IconButton(
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
-                      final XFile? photo =
-                          await picker.pickImage(source: ImageSource.camera);
+                      final XFile? photo = await picker.pickImage(
+                        source: ImageSource.camera,
+                        imageQuality: 80,
+                      );
                       if (photo != null) {
                         setState(() {
                           currentImage = photo.path;
                         });
+                        APIs.updateProfilePicture(File(currentImage!));
+                        if (!context.mounted) return;
+                        Navigator.of(context).pop();
                       }
-                      if (!context.mounted) return;
-                      Navigator.of(context).pop();
                     },
                     icon: SizedBox(
                         width: 56,
@@ -231,15 +234,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
                       // Pick an image.
-                      final XFile? image =
-                          await picker.pickImage(source: ImageSource.gallery);
+                      final XFile? image = await picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 80,
+                      );
                       if (image != null) {
                         setState(() {
                           currentImage = image.path;
                         });
+                        APIs.updateProfilePicture(File(currentImage!));
+
+                        if (!context.mounted) return;
+                        Navigator.of(context).pop();
                       }
-                      if (!context.mounted) return;
-                      Navigator.of(context).pop();
                     },
                     icon: SizedBox(
                         width: 56,

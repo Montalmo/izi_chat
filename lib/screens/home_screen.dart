@@ -169,9 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               }),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              print(chatUsers[0].name);
-            },
+            onPressed: () {},
             child: const Icon(Icons.add_comment_outlined),
           ),
         ),
