@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:izipizi_chat/api/api.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';
 
 import '../models/chat_user.dart';
@@ -34,31 +38,37 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Expanded(
               child: StreamBuilder(
+                stream: APIs.getAllMessages(),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                    case ConnectionState.active:
                     case ConnectionState.none:
-                    // return const Center(
-                    //   child: CircularProgressIndicator(),
-                    // );
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    case ConnectionState.active:
                     case ConnectionState.done:
-                      final List _messageList = [];
+                      final data = snapshot.data?.docs;
+                      log('Data: ${jsonEncode(data![0].data())}');
+                      final List _messageList = [
+                        'Hi',
+                        'Hello!',
+                      ];
+                      log('Data: $_messageList');
                       if (_messageList.isNotEmpty) {
                         return ListView.builder(
-                            itemCount: _messageList.length,
-                            itemBuilder: (context, index) {
-                              Text('Message: ${_messageList[index]}');
-                            });
+                          itemCount: _messageList.length,
+                          itemBuilder: (context, index) {
+                            return Text(_messageList[index]);
+                          },
+                        );
                       } else {
                         return const Center(
                           child: Text('Say Hi 🖐️! To new user!😜'),
                         );
                       }
-                      
                   }
                 },
-                stream: null,
               ),
             ),
             _chatInput(),

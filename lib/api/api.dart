@@ -101,4 +101,12 @@ class APIs {
         .doc(user.uid)
         .update({'image': me.image});
   }
+
+  ////************** ChatScreen IPIs ***************
+
+  //get all messages from firestore database
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
+    return firestore.collection('messages').snapshots();
+    
+  }
 }
