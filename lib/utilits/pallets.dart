@@ -48,4 +48,9 @@ abstract class PalletTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0.15,
   );
+  static const TextStyle caption = TextStyle(
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.5,
+  );
 }

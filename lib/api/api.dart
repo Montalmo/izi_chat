@@ -107,6 +107,5 @@ class APIs {
   //get all messages from firestore database
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
     return firestore.collection('messages').snapshots();
-    
   }
 }

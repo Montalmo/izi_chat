@@ -1,7 +1,7 @@
 enum MessageType { text, image }
 
-class AutoGenerate {
-  AutoGenerate({
+class Message {
+  Message({
     required this.toid,
     required this.msg,
     required this.read,
@@ -17,7 +17,7 @@ class AutoGenerate {
   late final String fromid;
   late final String sent;
 
-  AutoGenerate.fromJson(Map<String, dynamic> json) {
+  Message.fromJson(Map<String, dynamic> json) {
     toid = json['toid'].toString();
     msg = json['msg'].toString();
     read = json['read'].toString();

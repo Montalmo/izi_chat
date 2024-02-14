@@ -7,6 +7,8 @@ import 'package:izipizi_chat/api/api.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';
 
 import '../models/chat_user.dart';
+import '../models/message.dart';
+import '../widgets/message_card.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -18,6 +20,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final List<Message> _listMessages = [];
+
   @override
   Widget build(BuildContext context) {
     final dialogChatUser =
@@ -50,16 +54,36 @@ class _ChatScreenState extends State<ChatScreen> {
                     case ConnectionState.done:
                       final data = snapshot.data?.docs;
                       log('Data: ${jsonEncode(data![0].data())}');
-                      final List _messageList = [
-                        'Hi',
-                        'Hello!',
-                      ];
-                      log('Data: $_messageList');
-                      if (_messageList.isNotEmpty) {
+
+                      _listMessages.clear();
+                      _listMessages.add(
+                        Message(
+                            toid: '123',
+                            msg: 'Hi',
+                            read: '12:00 AM',
+                            type: MessageType.text,
+                            fromid: APIs.user.uid,
+                            sent: '11:59 AM'),
+                      );
+
+                      _listMessages.add(
+                        Message(
+                            toid: APIs.user.uid,
+                            msg: 'Hello!',
+                            read: '12:00 AM',
+                            type: MessageType.text,
+                            fromid: '777',
+                            sent: '12:05 AM'),
+                      );
+
+                      log('Data: $_listMessages');
+                      if (_listMessages.isNotEmpty) {
                         return ListView.builder(
-                          itemCount: _messageList.length,
+                          itemCount: _listMessages.length,
                           itemBuilder: (context, index) {
-                            return Text(_messageList[index]);
+                            return MessageCard(
+                              messages: _listMessages[index],
+                            );
                           },
                         );
                       } else {
