@@ -195,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               left: 16.0,
               right: 16.0,
               top: 16.0,
-              bottom: 64,
+              bottom: 16,
             ),
             children: [
               const Text(

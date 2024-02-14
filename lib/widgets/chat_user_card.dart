@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:izipizi_chat/models/chat_user.dart';
+import 'package:izipizi_chat/screens/chat_screen.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';
 import 'package:svg_flutter/svg.dart';
 
@@ -104,7 +105,12 @@ class _ChatUserCardState extends State<ChatUserCard> {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushNamed(
+                    ChatScreen.routeName,
+                    arguments: widget.user,
+                  );
+                },
                 borderRadius: BorderRadius.circular(20.0),
                 splashColor: PalletColors.cCyan600.withOpacity(.1),
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:izipizi_chat/screens/chat_screen.dart';
 import 'package:izipizi_chat/screens/profile_screen.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';
 import 'firebase_options.dart';
@@ -35,13 +36,13 @@ class ChatApp extends StatelessWidget {
         appBarTheme: appBarTheme,
         colorScheme: colorScheme,
         inputDecorationTheme: inputDecorationTheme,
-        
         hintColor: PalletColors.cCyan600,
       ),
       routes: {
         HomeScreen.routeName: (context) => const HomeScreen(),
         LoginScreen.routeName: (context) => const LoginScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
+        ChatScreen.routeName: (context) => const ChatScreen(),
       },
       home: const SplashScreen(),
     );
@@ -53,6 +54,3 @@ _initialFirebase() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 }
-
-
-
