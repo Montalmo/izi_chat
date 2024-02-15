@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:izipizi_chat/api/api.dart';
@@ -21,7 +18,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final List<Message> _listMessages = [];
+  List<Message> _listMessages = [];
+  final _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,42 +41,21 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Expanded(
               child: StreamBuilder(
-                stream: APIs.getAllMessages(),
+                stream: APIs.getAllMessages(dialogChatUser),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                     case ConnectionState.none:
                       return const Center(
-                        child: CircularProgressIndicator(),
+                        child: SizedBox(),
                       );
                     case ConnectionState.active:
                     case ConnectionState.done:
                       final data = snapshot.data?.docs;
-                      log('Data: ${jsonEncode(data![0].data())}');
 
-                      _listMessages.clear();
-                      _listMessages.add(
-                        Message(
-                            toid: '123',
-                            msg:
-                                'Hi! Reloaded 1 of 1913 libraries in 1 128ms (compile: 59 ms, reload: 358 ms, reassemble: 587 ms).',
-                            read: '12:00 AM',
-                            type: MessageType.text,
-                            fromid: APIs.user.uid,
-                            sent: '11:59 AM'),
-                      );
+                      _listMessages =
+                          data!.map((e) => Message.fromJson(e.data())).toList();
 
-                      _listMessages.add(
-                        Message(
-                            toid: APIs.user.uid,
-                            msg: 'Hello!',
-                            read: '12:00 AM',
-                            type: MessageType.text,
-                            fromid: '777',
-                            sent: '12:05 AM'),
-                      );
-
-                      log('Data: $_listMessages');
                       if (_listMessages.isNotEmpty) {
                         return ListView.builder(
                           itemCount: _listMessages.length,
@@ -97,14 +74,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
               ),
             ),
-            _chatInput(),
+            _chatInput(dialogChatUser),
           ],
         ),
       ),
     );
   }
 
-  Widget _chatInput() {
+  Widget _chatInput(ChatUser chatUser) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 4.0,
@@ -118,11 +95,12 @@ class _ChatScreenState extends State<ChatScreen> {
               color: PalletColors.cGray,
             ),
           ),
-          const Expanded(
+          Expanded(
             child: TextField(
               keyboardType: TextInputType.multiline,
               maxLength: null,
-              decoration: InputDecoration(
+              controller: _textController,
+              decoration: const InputDecoration(
                   hintStyle: TextStyle(
                     color: PalletColors.cGrayText,
                     fontSize: 14.0,
@@ -170,7 +148,15 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           IconButton.filled(
-            onPressed: () {},
+            onPressed: () {
+              if (_textController.text.isNotEmpty) {
+                APIs.sendMessage(
+                  chatUser,
+                  _textController.text,
+                );
+                _textController.text = '';
+              }
+            },
             color: PalletColors.cCyan600,
             icon: const Icon(
               Icons.send_outlined,
