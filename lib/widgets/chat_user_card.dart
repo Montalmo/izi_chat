@@ -52,11 +52,14 @@ class _ChatUserCardState extends State<ChatUserCard> {
                             ? CachedNetworkImage(
                                 width: 60,
                                 height: 60,
+                                fit: BoxFit.cover,
                                 imageUrl: widget.user.image,
                                 placeholder: (context, url) => const SizedBox(
                                   width: 24,
                                   height: 24,
-                                  child: CircularProgressIndicator(),
+                                  child: ColoredBox(
+                                    color: PalletColors.cGrayField,
+                                  ),
                                 ),
                                 errorWidget: (context, url, error) =>
                                     SvgPicture.asset(

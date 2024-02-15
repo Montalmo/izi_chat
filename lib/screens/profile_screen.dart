@@ -58,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: 120,
                             child: Image.file(
                               File(currentImage as String),
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         )
@@ -71,7 +71,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   height: 120,
                                   imageUrl: currentChatUser.image,
                                   placeholder: (context, url) =>
-                                      const CircularProgressIndicator(),
+                                      const ColoredBox(
+                                    color: PalletColors.cGrayField,
+                                  ),
                                   errorWidget: (context, url, error) =>
                                       SvgPicture.asset(
                                           'assets/svgs/def_avatar.svg'),

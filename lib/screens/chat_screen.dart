@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:izipizi_chat/api/api.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';
+import 'package:svg_flutter/svg_flutter.dart';
 
 import '../models/chat_user.dart';
 import '../models/message.dart';
@@ -59,7 +60,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       _listMessages.add(
                         Message(
                             toid: '123',
-                            msg: 'Hi',
+                            msg:
+                                'Hi! Reloaded 1 of 1913 libraries in 1 128ms (compile: 59 ms, reload: 358 ms, reassemble: 587 ms).',
                             read: '12:00 AM',
                             type: MessageType.text,
                             fromid: APIs.user.uid,
@@ -197,14 +199,27 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           CircleAvatar(
             backgroundColor: Colors.transparent,
-            child: ClipOval(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
               child: CachedNetworkImage(
+                height: 40,
+                width: 40,
+                fit: BoxFit.cover,
                 imageUrl: dialogChatUser.image,
+                placeholder: (context, url) => const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: ColoredBox(
+                    color: PalletColors.cGrayField,
+                  ),
+                ),
+                errorWidget: (context, url, error) =>
+                    SvgPicture.asset('assets/svgs/def_avatar.svg'),
               ),
             ),
           ),
           const SizedBox(
-            width: 16.0,
+            width: 12.0,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
