@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   late List<ChatUser> chatUsers;
   List<ChatUser> searchUsers = [];
   bool _isSearching = false;
@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
             title: _isSearching
                 ? TextField(
-                    controller: controller,
+                    controller: _controller,
                     //searching logic
                     onChanged: (val) {
                       //search logic
@@ -97,6 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
               IconButton(
                 onPressed: () {
                   setState(() {
+                    if (_isSearching) {
+                      _controller.clear();
+                      searchUsers.clear();
+                    }
                     _isSearching = !_isSearching;
                   });
                 },

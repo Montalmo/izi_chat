@@ -185,79 +185,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void showBottomSheet() {
     showModalBottomSheet(
+        
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(14.0), topRight: Radius.circular(14.0)),
         ),
         context: context,
         builder: (_) {
-          return ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.only(
-              left: 16.0,
-              right: 16.0,
-              top: 16.0,
-              bottom: 16,
-            ),
-            children: [
-              const Text(
-                'Pick profile picture',
-                style: PalletTextStyles.bodyMedium,
-                textAlign: TextAlign.center,
+          return SafeArea(
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+                top: 16.0,
+                bottom: 16,
               ),
-              const SizedBox(
-                height: 16.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      final ImagePicker picker = ImagePicker();
-                      final XFile? photo = await picker.pickImage(
-                        source: ImageSource.camera,
-                        imageQuality: 80,
-                      );
-                      if (photo != null) {
-                        setState(() {
-                          currentImage = photo.path;
-                        });
-                        APIs.updateProfilePicture(File(currentImage!));
-                        if (!context.mounted) return;
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    icon: SizedBox(
-                        width: 56,
-                        height: 56,
-                        child: Image.asset('assets/images/camera_icon.png')),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      final ImagePicker picker = ImagePicker();
-                      // Pick an image.
-                      final XFile? image = await picker.pickImage(
-                        source: ImageSource.gallery,
-                        imageQuality: 80,
-                      );
-                      if (image != null) {
-                        setState(() {
-                          currentImage = image.path;
-                        });
-                        APIs.updateProfilePicture(File(currentImage!));
+              children: [
+                const Text(
+                  'Pick profile picture',
+                  style: PalletTextStyles.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? photo = await picker.pickImage(
+                          source: ImageSource.camera,
+                          imageQuality: 80,
+                        );
+                        if (photo != null) {
+                          setState(() {
+                            currentImage = photo.path;
+                          });
+                          APIs.updateProfilePicture(File(currentImage!));
+                          if (!context.mounted) return;
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      icon: SizedBox(
+                          width: 56,
+                          height: 56,
+                          child: Image.asset('assets/images/camera_icon.png')),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        // Pick an image.
+                        final XFile? image = await picker.pickImage(
+                          source: ImageSource.gallery,
+                          imageQuality: 80,
+                        );
+                        if (image != null) {
+                          setState(() {
+                            currentImage = image.path;
+                          });
+                          APIs.updateProfilePicture(File(currentImage!));
 
-                        if (!context.mounted) return;
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    icon: SizedBox(
-                        width: 56,
-                        height: 56,
-                        child: Image.asset('assets/images/file_pic_icon.png')),
-                  ),
-                ],
-              ),
-            ],
+                          if (!context.mounted) return;
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      icon: SizedBox(
+                          width: 56,
+                          height: 56,
+                          child:
+                              Image.asset('assets/images/file_pic_icon.png')),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           );
         });
   }
