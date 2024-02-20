@@ -63,9 +63,7 @@ class _MessageCardState extends State<MessageCard> {
                     color: PalletColors.cGrayText,
                   ),
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
+                
                 if (widget.messages.read.isNotEmpty)
                   const Icon(
                     Icons.done_all_rounded,

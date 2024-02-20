@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:izipizi_chat/api/api.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';
 import 'package:svg_flutter/svg_flutter.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 import '../models/chat_user.dart';
 import '../models/message.dart';
@@ -21,6 +23,9 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Message> _listMessages = [];
   final _textController = TextEditingController();
 
+  // for view or hiding emoji bar
+  bool _showEmoji = false;
+
   @override
   Widget build(BuildContext context) {
     final dialogChatUser =
@@ -28,54 +33,89 @@ class _ChatScreenState extends State<ChatScreen> {
 
     final double mqd = MediaQuery.of(context).size.width;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          flexibleSpace: _appBar(
-            dialogChatUser,
-            mqd,
-          ),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder(
-                stream: APIs.getAllMessages(dialogChatUser),
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                    case ConnectionState.none:
-                      return const Center(
-                        child: SizedBox(),
-                      );
-                    case ConnectionState.active:
-                    case ConnectionState.done:
-                      final data = snapshot.data?.docs;
-
-                      _listMessages =
-                          data!.map((e) => Message.fromJson(e.data())).toList();
-
-                      if (_listMessages.isNotEmpty) {
-                        return ListView.builder(
-                          itemCount: _listMessages.length,
-                          itemBuilder: (context, index) {
-                            return MessageCard(
-                              messages: _listMessages[index],
-                            );
-                          },
-                        );
-                      } else {
-                        return const Center(
-                          child: Text('Say Hi 🖐️! To new user!😜'),
-                        );
-                      }
-                  }
-                },
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: SafeArea(
+        child: PopScope(
+          canPop: _showEmoji ? false : true,
+          onPopInvoked: (didPop) {
+            setState(() {
+              _showEmoji = !_showEmoji;
+            });
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              flexibleSpace: _appBar(
+                dialogChatUser,
+                mqd,
               ),
             ),
-            _chatInput(dialogChatUser),
-          ],
+            body: Column(
+              children: [
+                Expanded(
+                  child: StreamBuilder(
+                    stream: APIs.getAllMessages(dialogChatUser),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                        case ConnectionState.none:
+                          return const Center(
+                            child: SizedBox(),
+                          );
+                        case ConnectionState.active:
+                        case ConnectionState.done:
+                          final data = snapshot.data?.docs;
+
+                          _listMessages = data!
+                              .map((e) => Message.fromJson(e.data()))
+                              .toList();
+
+                          if (_listMessages.isNotEmpty) {
+                            return ListView.builder(
+                              itemCount: _listMessages.length,
+                              itemBuilder: (context, index) {
+                                return MessageCard(
+                                  messages: _listMessages[index],
+                                );
+                              },
+                            );
+                          } else {
+                            return const Center(
+                              child: Text('Say Hi 🖐️! To new user!😜'),
+                            );
+                          }
+                      }
+                    },
+                  ),
+                ),
+                _chatInput(dialogChatUser),
+                const SizedBox(
+                  height: 8.0,
+                ),
+                if (_showEmoji)
+                  SizedBox(
+                    height: 170.0,
+                    child: EmojiPicker(
+                      textEditingController: _textController,
+                      config: const Config(
+                        bottomActionBarConfig: BottomActionBarConfig(
+                          enabled: false,
+                        ),
+                        categoryViewConfig: CategoryViewConfig(
+                            backgroundColor: PalletColors.cBGContainer),
+                        emojiViewConfig: EmojiViewConfig(
+                          emojiSizeMax: 32.0,
+                          backgroundColor: PalletColors.cBGContainer,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -85,14 +125,20 @@ class _ChatScreenState extends State<ChatScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 4.0,
+        vertical: 4.0,
       ),
       child: Row(
         children: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(
+            onPressed: () {
+              setState(() {
+                FocusScope.of(context).unfocus();
+                _showEmoji = !_showEmoji;
+              });
+            },
+            icon: Icon(
               Icons.emoji_emotions_outlined,
-              color: PalletColors.cGray,
+              color: _showEmoji ? PalletColors.cCyan600 : PalletColors.cGray,
             ),
           ),
           Expanded(
