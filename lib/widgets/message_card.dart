@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:izipizi_chat/helper/my_date_util.dart';
 import 'package:izipizi_chat/models/message.dart';
@@ -27,52 +28,84 @@ class _MessageCardState extends State<MessageCard> {
 
   Widget _myMessage() {
     return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-      Container(
-        padding: const EdgeInsets.all(12.0),
-        margin: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 4.0,
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(color: PalletColors.cCyan600.withOpacity(0.2)),
-          color: PalletColors.cCyanField,
-          borderRadius: const BorderRadius.all(Radius.circular(14)).copyWith(
-            bottomRight: const Radius.circular(0),
+      const SizedBox(
+        width: 64.0,
+      ),
+      Flexible(
+        child: Container(
+          padding: EdgeInsets.all(
+                  widget.messages.type == MessageType.text ? 12.0 : 0)
+              .copyWith(
+            bottom: 12.0,
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.messages.msg,
-              style: PalletTextStyles.bodyBig,
+          margin: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 4.0,
+          ),
+          decoration: BoxDecoration(
+            border: Border.all(color: PalletColors.cCyan600.withOpacity(0.2)),
+            color: PalletColors.cCyanField,
+            borderRadius: const BorderRadius.all(Radius.circular(14)).copyWith(
+              bottomRight: const Radius.circular(0),
             ),
-            const SizedBox(
-              height: 4.0,
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  MyDateUtil.getFormattedTime(
-                    context: context,
-                    time: widget.messages.sent,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              widget.messages.type == MessageType.text
+                  ? Text(
+                      widget.messages.msg,
+                      style: PalletTextStyles.bodyBig,
+                    )
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: CachedNetworkImage(
+                        fit: BoxFit.fill,
+                        width: 200,
+                        imageUrl: widget.messages.msg,
+                        placeholder: (context, url) => const ColoredBox(
+                          color: PalletColors.cGrayField,
+                        ),
+                        errorWidget: (context, url, error) => const Icon(
+                          Icons.image,
+                          size: 70.0,
+                        ),
+                      ),
+                    ),
+              const SizedBox(
+                height: 4.0,
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  widget.messages.type == MessageType.image
+                      ? const SizedBox(
+                          width: 12.0,
+                        )
+                      : const SizedBox(
+                          width: 0,
+                        ),
+                  Text(
+                    MyDateUtil.getFormattedTime(
+                      context: context,
+                      time: widget.messages.sent,
+                    ),
+                    style: PalletTextStyles.caption.copyWith(
+                      color: PalletColors.cGrayText,
+                    ),
                   ),
-                  style: PalletTextStyles.caption.copyWith(
-                    color: PalletColors.cGrayText,
-                  ),
-                ),
-                
-                if (widget.messages.read.isNotEmpty)
-                  const Icon(
-                    Icons.done_all_rounded,
-                    color: PalletColors.cCyan600,
-                    size: 16.0,
-                  )
-              ],
-            ),
-          ],
+                  const SizedBox(width: 4.0),
+                  if (widget.messages.read.isNotEmpty)
+                    const Icon(
+                      Icons.done_all_rounded,
+                      color: PalletColors.cCyan600,
+                      size: 16.0,
+                    )
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     ]);
@@ -83,44 +116,72 @@ class _MessageCardState extends State<MessageCard> {
       APIs.updateMessageReadStatus(widget.messages);
     }
 
-    return Row(children: [
-      Container(
-        padding: const EdgeInsets.all(12.0),
-        margin: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 4.0,
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.white10,
-          ),
-          color: PalletColors.cGrayField,
-          borderRadius: const BorderRadius.all(Radius.circular(14)).copyWith(
-            bottomLeft: const Radius.circular(0),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.messages.msg,
-              style: PalletTextStyles.bodyMedium,
+    return Row(
+      children: [
+        Flexible(
+          child: Container(
+            padding: EdgeInsets.all(
+                    widget.messages.type == MessageType.text ? 12.0 : 0)
+                .copyWith(
+              bottom: 12.0,
             ),
-            const SizedBox(
-              height: 4.0,
+            margin: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 4.0,
             ),
-            Text(
-              MyDateUtil.getFormattedTime(
-                context: context,
-                time: widget.messages.sent,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.white10,
               ),
-              style: PalletTextStyles.caption.copyWith(
-                color: PalletColors.cGrayText,
+              color: PalletColors.cGrayField,
+              borderRadius:
+                  const BorderRadius.all(Radius.circular(14)).copyWith(
+                bottomLeft: const Radius.circular(0),
               ),
             ),
-          ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                widget.messages.type == MessageType.text
+                    ? Text(
+                        widget.messages.msg,
+                        style: PalletTextStyles.bodyBig,
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: CachedNetworkImage(
+                          fit: BoxFit.fill,
+                          width: 200,
+                          imageUrl: widget.messages.msg,
+                          placeholder: (context, url) => const ColoredBox(
+                            color: PalletColors.cGrayField,
+                          ),
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.image,
+                            size: 70.0,
+                          ),
+                        ),
+                      ),
+                const SizedBox(
+                  height: 4.0,
+                ),
+                Text(
+                  MyDateUtil.getFormattedTime(
+                    context: context,
+                    time: widget.messages.sent,
+                  ),
+                  style: PalletTextStyles.caption.copyWith(
+                    color: PalletColors.cGrayText,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-    ]);
+        const SizedBox(
+          width: 64.0,
+        )
+      ],
+    );
   }
 }

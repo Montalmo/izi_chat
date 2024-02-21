@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -117,13 +118,14 @@ class APIs {
         .snapshots();
   }
 
-  static Future<void> sendMessage(ChatUser chatUser, String msg) async {
+  static Future<void> sendMessage(
+      ChatUser chatUser, String msg, MessageType type) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
     final Message message = Message(
       toid: chatUser.id,
       msg: msg,
       read: '',
-      type: MessageType.text,
+      type: type,
       fromid: user.uid,
       sent: time,
     );
@@ -147,5 +149,18 @@ class APIs {
         .orderBy('sent', descending: true)
         .limit(1)
         .snapshots();
+  }
+
+  static Future<void> sendChatImage(ChatUser chatUser, File file) async {
+    final ext = file.path.split('.').last;
+    final ref = storage.ref().child(
+        'images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}');
+
+    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext')).then(
+          (p0) => log('Data transfered: ${p0.bytesTransferred / 1000} Kb'),
+        );
+
+    final imageUrl = await ref.getDownloadURL();
+    await sendMessage(chatUser, imageUrl, MessageType.image);
   }
 }

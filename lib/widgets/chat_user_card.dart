@@ -108,12 +108,16 @@ class _ChatUserCardState extends State<ChatUserCard> {
                                   style: PalletTextStyles.titleBig,
                                 ),
                               ),
-                              Text(
-                                _message != null
-                                    ? _message!.msg
-                                    : widget.user.about,
-                                style: PalletTextStyles.bodySmall
-                                    .copyWith(color: PalletColors.cGrayText),
+                              SizedBox(
+                                width: mqd - 175,
+                                child: Text(
+                                  _message != null
+                                      ? _message!.msg
+                                      : widget.user.about,
+                                  style: PalletTextStyles.bodySmall
+                                      .copyWith(color: PalletColors.cGrayText),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),
