@@ -112,7 +112,9 @@ class _ChatUserCardState extends State<ChatUserCard> {
                                 width: mqd - 175,
                                 child: Text(
                                   _message != null
-                                      ? _message!.msg
+                                      ? _message!.type == MessageType.image
+                                          ? 'You have an image!'
+                                          : _message!.msg
                                       : widget.user.about,
                                   style: PalletTextStyles.bodySmall
                                       .copyWith(color: PalletColors.cGrayText),

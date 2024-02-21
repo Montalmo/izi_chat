@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:izipizi_chat/models/chat_user.dart';
 import 'package:izipizi_chat/screens/profile_screen.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';
@@ -25,7 +28,21 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     APIs.getSelfInfo();
+    APIs.updateActiveStatus(true);
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      log('Message: $message');
+      if (message.toString().contains('pause')) APIs.updateActiveStatus(false);
+      if (message.toString().contains('inactive')) {
+        APIs.updateActiveStatus(false);
+      }
+      if (message.toString().contains('detached')) {
+        APIs.updateActiveStatus(false);
+      }
+      if (message.toString().contains('resume')) APIs.updateActiveStatus(true);
+      return Future.value(message);
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
