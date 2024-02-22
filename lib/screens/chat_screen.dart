@@ -4,6 +4,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:izipizi_chat/helper/my_date_util.dart';
+import 'package:izipizi_chat/screens/view_profile_screen.dart';
 import 'package:svg_flutter/svg_flutter.dart';
 
 import '../api/api.dart';
@@ -256,7 +257,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _appBar(ChatUser dialogChatUser, double mqd) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.pushNamed(context, ViewProfileScreen.routeName,
+            arguments: dialogChatUser);
+      },
       child: StreamBuilder(
           stream: APIs.getUserInfo(dialogChatUser),
           builder: (context, snapshot) {

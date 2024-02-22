@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../api/api.dart';
-import '../screens/auth/login_screen.dart';
+import 'login_screen.dart';
 import '../utilits/pallets.dart';
 import '../models/chat_user.dart';
 import '../helper/dialogs.dart';
@@ -66,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(24.0),
                           child: currentChatUser.image != ''
                               ? CachedNetworkImage(
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.cover,
                                   width: 120,
                                   height: 120,
                                   imageUrl: currentChatUser.image,
@@ -164,10 +165,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             backgroundColor: Colors.red.shade400,
             onPressed: () async {
               Dialogs.showProgressBar(context);
+              await APIs.updateActiveStatus(false);
               await APIs.auth.signOut().then((value) async {
                 await GoogleSignIn().signOut().then((value) {
                   Navigator.pop(context);
                   Navigator.pop(context);
+                  APIs.auth = FirebaseAuth.instance;
                 });
               });
               if (context.mounted) {
@@ -185,7 +188,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void showBottomSheet() {
     showModalBottomSheet(
-        
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(14.0), topRight: Radius.circular(14.0)),

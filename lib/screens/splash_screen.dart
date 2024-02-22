@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:izipizi_chat/api/api.dart';
-import 'package:izipizi_chat/screens/auth/login_screen.dart';
+import 'package:izipizi_chat/screens/login_screen.dart';
 import 'package:izipizi_chat/screens/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {

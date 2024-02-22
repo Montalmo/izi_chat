@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:izipizi_chat/screens/chat_screen.dart';
-import 'package:izipizi_chat/screens/profile_screen.dart';
-import 'package:izipizi_chat/utilits/pallets.dart';
 import 'firebase_options.dart';
 
+import '../screens/chat_screen.dart';
+import '../screens/profile_screen.dart';
+import '../screens/view_profile_screen.dart';
+import '../utilits/pallets.dart';
 import '../utilits/themes.dart';
-import '../screens/auth/login_screen.dart';
+import '../screens/login_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/splash_screen.dart';
 
@@ -43,6 +44,7 @@ class ChatApp extends StatelessWidget {
         LoginScreen.routeName: (context) => const LoginScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
         ChatScreen.routeName: (context) => const ChatScreen(),
+        ViewProfileScreen.routeName: (context) => const ViewProfileScreen(),
       },
       home: const SplashScreen(),
     );

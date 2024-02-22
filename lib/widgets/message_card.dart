@@ -162,16 +162,19 @@ class _MessageCardState extends State<MessageCard> {
                           ),
                         ),
                       ),
-                const SizedBox(
-                  height: 4.0,
-                ),
-                Text(
-                  MyDateUtil.getFormattedTime(
-                    context: context,
-                    time: widget.messages.sent,
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: widget.messages.type == MessageType.image ? 12.0 : 0,
+                    left: widget.messages.type == MessageType.image ? 12.0 : 0,
                   ),
-                  style: PalletTextStyles.caption.copyWith(
-                    color: PalletColors.cGrayText,
+                  child: Text(
+                    MyDateUtil.getFormattedTime(
+                      context: context,
+                      time: widget.messages.sent,
+                    ),
+                    style: PalletTextStyles.caption.copyWith(
+                      color: PalletColors.cGrayText,
+                    ),
                   ),
                 ),
               ],

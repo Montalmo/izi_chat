@@ -29,20 +29,27 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     APIs.getSelfInfo();
     APIs.updateActiveStatus(true);
-    SystemChannels.lifecycle.setMessageHandler((message) {
-      log('Message: $message');
-      if (message.toString().contains('pause')) APIs.updateActiveStatus(false);
-      if (message.toString().contains('inactive')) {
-        APIs.updateActiveStatus(false);
-      }
-      if (message.toString().contains('detached')) {
-        APIs.updateActiveStatus(false);
-      }
-      if (message.toString().contains('resume')) APIs.updateActiveStatus(true);
-      return Future.value(message);
-    });
-  }
 
+    if (APIs.auth.currentUser != null) {
+      SystemChannels.lifecycle.setMessageHandler((message) {
+        log('Message: $message');
+
+        if (message.toString().contains('pause')) {
+          APIs.updateActiveStatus(false);
+        }
+        if (message.toString().contains('inactive')) {
+          APIs.updateActiveStatus(false);
+        }
+        if (message.toString().contains('detached')) {
+          APIs.updateActiveStatus(false);
+        }
+        if (message.toString().contains('resume')) {
+          APIs.updateActiveStatus(true);
+        }
+        return Future.value(message);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

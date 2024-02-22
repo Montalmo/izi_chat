@@ -7,8 +7,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:izipizi_chat/helper/dialogs.dart';
 
 import 'package:svg_flutter/svg.dart';
-import '../../api/api.dart';
-import '../../screens/home_screen.dart';
+import '../api/api.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
