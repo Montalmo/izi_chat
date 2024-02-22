@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:izipizi_chat/helper/my_date_util.dart';
 import 'package:izipizi_chat/models/message.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';
@@ -238,9 +241,9 @@ class _MessageCardState extends State<MessageCard> {
                         ),
                         lable: 'Copy Text',
                         onTap: () async {
-                          await Clipboard.setData(
-                                  ClipboardData(text: widget.messages.msg))
-                              .then((value) {
+                          await Clipboard.setData(ClipboardData(
+                            text: widget.messages.msg,
+                          )).then((value) {
                             Navigator.pop(context);
                             Dialogs.showConfirmSnackBar(
                               context,
@@ -255,7 +258,22 @@ class _MessageCardState extends State<MessageCard> {
                           color: PalletColors.cCyan600,
                         ),
                         lable: 'Save Image',
-                        onTap: () {}),
+                        onTap: () async {
+                          log(widget.messages.msg);
+                          try {
+                            await GallerySaver.saveImage(widget.messages.msg,
+                                    albumName: 'IZIChat')
+                                .then((success) {
+                              Navigator.pop(context);
+                              if (success != null && success) {
+                                Dialogs.showConfirmSnackBar(
+                                    context, 'Image dowloaded!');
+                              }
+                            });
+                          } catch (e) {
+                            log('Error saving image: $e');
+                          }
+                        }),
                 const Divider(
                   color: PalletColors.cGrayField,
                   height: 4,

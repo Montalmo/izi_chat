@@ -169,8 +169,9 @@ class APIs {
 
   static Future<void> sendChatImage(ChatUser chatUser, File file) async {
     final ext = file.path.split('.').last;
+    log(ext);
     final ref = storage.ref().child(
-        'images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}');
+        'images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
 
     await ref.putFile(file, SettableMetadata(contentType: 'image/$ext')).then(
           (p0) => log('Data transfered: ${p0.bytesTransferred / 1000} Kb'),
