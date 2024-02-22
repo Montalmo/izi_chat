@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:izipizi_chat/helper/my_date_util.dart';
 import 'package:izipizi_chat/models/message.dart';
 import 'package:izipizi_chat/utilits/pallets.dart';
 
 import '../api/api.dart';
+import '../helper/dialogs.dart';
 
 class MessageCard extends StatefulWidget {
   const MessageCard({
@@ -21,9 +23,14 @@ class MessageCard extends StatefulWidget {
 class _MessageCardState extends State<MessageCard> {
   @override
   Widget build(BuildContext context) {
-    return APIs.user.uid == widget.messages.fromid
-        ? _myMessage()
-        : _companionMessage();
+    bool isMe = APIs.user.uid == widget.messages.fromid;
+
+    return InkWell(
+      onLongPress: () {
+        _showBottonSheet(isMe);
+      },
+      child: isMe ? _myMessage() : _companionMessage(),
+    );
   }
 
   Widget _myMessage() {
@@ -185,6 +192,163 @@ class _MessageCardState extends State<MessageCard> {
           width: 64.0,
         )
       ],
+    );
+  }
+
+  void _showBottonSheet(bool isMe) {
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(
+              20.0,
+            ),
+          ),
+        ),
+        builder: (_) {
+          return SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ).copyWith(
+                bottom: 16.0,
+              ),
+              shrinkWrap: true,
+              children: [
+                Container(
+                  height: 4.0,
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 146.0),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(
+                        14.0,
+                      ),
+                    ),
+                    color: PalletColors.cGrayText,
+                  ),
+                ),
+                widget.messages.type == MessageType.text
+                    ? _OptionItem(
+                        icon: const Icon(
+                          Icons.copy,
+                          size: 24.0,
+                          color: PalletColors.cCyan600,
+                        ),
+                        lable: 'Copy Text',
+                        onTap: () async {
+                          await Clipboard.setData(
+                                  ClipboardData(text: widget.messages.msg))
+                              .then((value) {
+                            Navigator.pop(context);
+                            Dialogs.showConfirmSnackBar(
+                              context,
+                              'Text copied!',
+                            );
+                          });
+                        })
+                    : _OptionItem(
+                        icon: const Icon(
+                          Icons.download_for_offline_outlined,
+                          size: 24.0,
+                          color: PalletColors.cCyan600,
+                        ),
+                        lable: 'Save Image',
+                        onTap: () {}),
+                const Divider(
+                  color: PalletColors.cGrayField,
+                  height: 4,
+                ),
+                if (widget.messages.type == MessageType.text && isMe)
+                  _OptionItem(
+                      icon: const Icon(
+                        Icons.edit_outlined,
+                        size: 24.0,
+                        color: PalletColors.cCyan600,
+                      ),
+                      lable: 'Edit Message',
+                      onTap: () {}),
+                if (isMe)
+                  _OptionItem(
+                      icon: const Icon(
+                        Icons.delete_forever_outlined,
+                        size: 24.0,
+                        color: Colors.red,
+                      ),
+                      lable: 'Delete Image',
+                      onTap: () async {
+                        await APIs.dleteMessage(widget.messages).then((value) {
+                          Navigator.pop(context);
+                        });
+                      }),
+                if (isMe)
+                  const Divider(
+                    color: PalletColors.cGrayField,
+                    height: 4,
+                  ),
+                _OptionItem(
+                    icon: const Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 24.0,
+                      color: PalletColors.cCyan600,
+                    ),
+                    lable: 'Sent At:  ${MyDateUtil.getLastMessageTime(
+                      context: context,
+                      time: widget.messages.sent,
+                    )}',
+                    onTap: () {}),
+                _OptionItem(
+                    icon: const Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 24.0,
+                      color: Colors.green,
+                    ),
+                    lable: widget.messages.read.isEmpty
+                        ? 'Read At:  Not seen yet'
+                        : 'Read At:  ${MyDateUtil.getLastMessageTime(
+                            context: context,
+                            time: widget.messages.read,
+                          )}',
+                    onTap: () {}),
+              ],
+            ),
+          );
+        });
+  }
+}
+
+class _OptionItem extends StatelessWidget {
+  const _OptionItem(
+      {required this.icon, required this.lable, required this.onTap});
+
+  final Icon icon;
+  final String lable;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 12.0,
+        ),
+        child: Row(
+          children: [
+            icon,
+            const SizedBox(
+              width: 16.0,
+            ),
+            Flexible(
+                child: Text(
+              lable,
+              style: PalletTextStyles.bodyMedium,
+            )),
+          ],
+        ),
+      ),
     );
   }
 }
