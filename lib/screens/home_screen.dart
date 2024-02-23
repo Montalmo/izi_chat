@@ -8,6 +8,7 @@ import 'package:izipizi_chat/utilits/pallets.dart';
 import 'package:izipizi_chat/widgets/chat_user_card.dart';
 
 import '../api/api.dart';
+import '../helper/dialogs.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -148,60 +149,199 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           body: StreamBuilder(
-              stream: APIs.getAllUsers(),
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                  case ConnectionState.none:
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+            stream: APIs.getMyUsersId(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                case ConnectionState.none:
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
 
-                  case ConnectionState.active:
-                  case ConnectionState.done:
-                    final data = snapshot.data?.docs;
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  return StreamBuilder(
+                      stream: APIs.getAllUsers(
+                          snapshot.data?.docs.map((e) => e.id).toList() ?? []),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                          case ConnectionState.none:
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
 
-                    chatUsers = data
-                            ?.map(
-                              (e) => ChatUser.fromJson(
-                                e.data(),
-                              ),
-                            )
-                            .toList() ??
-                        [];
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            final data = snapshot.data?.docs;
 
-                    return chatUsers.isNotEmpty
-                        ? ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                            ),
-                            itemCount: _isSearching
-                                ? searchUsers.length
-                                : chatUsers.length,
-                            itemBuilder: (context, index) {
-                              return ChatUserCard(
-                                user: _isSearching
-                                    ? searchUsers[index]
-                                    : chatUsers[index],
-                              );
-                            },
-                          )
-                        : Center(
-                            child: Text(
-                              'Your chat list is empty',
-                              style: PalletTextStyles.bodyBig
-                                  .copyWith(color: PalletColors.cCyan600),
-                            ),
-                          );
-                }
-              }),
+                            chatUsers = data
+                                    ?.map(
+                                      (e) => ChatUser.fromJson(
+                                        e.data(),
+                                      ),
+                                    )
+                                    .toList() ??
+                                [];
+
+                            return chatUsers.isNotEmpty
+                                ? ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    itemCount: _isSearching
+                                        ? searchUsers.length
+                                        : chatUsers.length,
+                                    itemBuilder: (context, index) {
+                                      return ChatUserCard(
+                                        user: _isSearching
+                                            ? searchUsers[index]
+                                            : chatUsers[index],
+                                      );
+                                    },
+                                  )
+                                : Center(
+                                    child: Text(
+                                      'Your chat list is empty',
+                                      style: PalletTextStyles.bodyBig.copyWith(
+                                          color: PalletColors.cCyan600),
+                                    ),
+                                  );
+                        }
+                      });
+              }
+            },
+          ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              _showMessageDialog();
+            },
             child: const Icon(Icons.add_comment_outlined),
           ),
         ),
       ),
     );
   }
+
+  void _showMessageDialog() {
+    String email = '';
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        contentPadding: const EdgeInsets.only(
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+          bottom: 16.0,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14.0),
+        ),
+        title: Row(
+          children: [
+            const Icon(
+              Icons.add_reaction_outlined,
+              size: 16.0,
+              color: PalletColors.cCyan600,
+            ),
+            const SizedBox(
+              width: 12.0,
+            ),
+            Text('Add user by Email',
+                style: PalletTextStyles.bodySmall
+                    .copyWith(color: PalletColors.cGrayText)),
+          ],
+        ),
+        content: TextFormField(
+          maxLines: 1,
+          onChanged: (value) => email = value,
+          decoration: const InputDecoration(
+              hintText: 'Users Email',
+              hintStyle: TextStyle(color: PalletColors.cGrayText)),
+        ),
+        actions: [
+          MaterialButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              "Cancel",
+              style: PalletTextStyles.titleMedium.copyWith(color: Colors.red),
+            ),
+          ),
+          MaterialButton(
+            onPressed: () async {
+              if (email.isNotEmpty) {
+                await APIs.addChatUser(email).then((value) {
+                  if (!value) {
+                    Dialogs.showErrorSnackBar(context, 'User does not Exists');
+                  }
+                });
+              }
+              if (!mounted) return;
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              "Add",
+              style: PalletTextStyles.titleMedium.copyWith(
+                color: PalletColors.cCyan600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
+// StreamBuilder(
+//               stream: APIs.getAllUsers(),
+//               builder: (context, snapshot) {
+//                 switch (snapshot.connectionState) {
+//                   case ConnectionState.waiting:
+//                   case ConnectionState.none:
+//                     return const Center(
+//                       child: CircularProgressIndicator(),
+//                     );
+
+//                   case ConnectionState.active:
+//                   case ConnectionState.done:
+//                     final data = snapshot.data?.docs;
+
+//                     chatUsers = data
+//                             ?.map(
+//                               (e) => ChatUser.fromJson(
+//                                 e.data(),
+//                               ),
+//                             )
+//                             .toList() ??
+//                         [];
+
+//                     return chatUsers.isNotEmpty
+//                         ? ListView.builder(
+//                             physics: const BouncingScrollPhysics(),
+//                             padding: const EdgeInsets.symmetric(
+//                               horizontal: 16,
+//                             ),
+//                             itemCount: _isSearching
+//                                 ? searchUsers.length
+//                                 : chatUsers.length,
+//                             itemBuilder: (context, index) {
+//                               return ChatUserCard(
+//                                 user: _isSearching
+//                                     ? searchUsers[index]
+//                                     : chatUsers[index],
+//                               );
+//                             },
+//                           )
+//                         : Center(
+//                             child: Text(
+//                               'Your chat list is empty',
+//                               style: PalletTextStyles.bodyBig
+//                                   .copyWith(color: PalletColors.cCyan600),
+//                             ),
+//                           );
+//                 }
+//               }),

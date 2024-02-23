@@ -28,6 +28,28 @@ class APIs {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
 
+  //for cheking if user exist or not
+  static Future addChatUser(String email) async {
+    final data = await firestore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+
+    log('User exist: ${data.docs.first.data()}');
+
+    if (data.docs.isNotEmpty && data.docs.first.id != user.uid) {
+      await firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('my_users')
+          .doc(data.docs.first.id)
+          .set({});
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //get current user data
   static Future<void> getSelfInfo() async {
     await firestore.collection('users').doc(user.uid).get().then(
@@ -73,11 +95,33 @@ class APIs {
         .set(chatUser.toJson());
   }
 
+  static Future<void> sendFirstMessage(
+      ChatUser chatUser, String msg, MessageType type) async {
+    await firestore
+        .collection('users')
+        .doc(chatUser.id)
+        .collection('my_users')
+        .doc(user.uid)
+        .set({}).then((value) {
+      sendMessage(chatUser, msg, type);
+    });
+  }
+
   //get all users from firestore database
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(
+      List<String> userIDs) {
+    log('My user IDs: $userIDs');
     return firestore
         .collection('users')
-        .where('id', isNotEqualTo: user.uid)
+        .where('id', whereIn: userIDs)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUsersId() {
+    return firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('my_users')
         .snapshots();
   }
 

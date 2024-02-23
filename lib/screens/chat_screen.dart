@@ -235,6 +235,13 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton.filled(
             onPressed: () {
               if (_textController.text.isNotEmpty) {
+                if (_listMessages.isEmpty) {
+                  APIs.sendFirstMessage(
+                    chatUser,
+                    _textController.text,
+                    MessageType.text,
+                  );
+                }
                 APIs.sendMessage(
                   chatUser,
                   _textController.text,
