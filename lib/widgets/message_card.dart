@@ -286,7 +286,10 @@ class _MessageCardState extends State<MessageCard> {
                         color: PalletColors.cCyan600,
                       ),
                       lable: 'Edit Message',
-                      onTap: () {}),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showMessageUpdateDialog();
+                      }),
                 if (isMe)
                   _OptionItem(
                       icon: const Icon(
@@ -333,6 +336,70 @@ class _MessageCardState extends State<MessageCard> {
             ),
           );
         });
+  }
+
+  void _showMessageUpdateDialog() {
+    String updatedMsg = widget.messages.msg;
+
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              contentPadding: const EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+                top: 16.0,
+                bottom: 16.0,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.0),
+              ),
+              title: Row(children: [
+                const Icon(
+                  Icons.message_outlined,
+                  color: PalletColors.cCyan600,
+                  size: 16.0,
+                ),
+                const SizedBox(
+                  width: 12.0,
+                ),
+                Text(
+                  'Update message',
+                  style: PalletTextStyles.bodySmall.copyWith(
+                    color: PalletColors.cGrayText,
+                  ),
+                )
+              ]),
+              content: TextFormField(
+                maxLines: null,
+                onChanged: (value) => updatedMsg = value,
+                initialValue: updatedMsg,
+              ),
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: PalletTextStyles.titleMedium
+                        .copyWith(color: Colors.red),
+                  ),
+                ),
+                MaterialButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await APIs.updateMessage(widget.messages, updatedMsg);
+                    if (!mounted)
+                      return; // Checks `this.mounted`, not `context.mounted`.
+                  },
+                  child: Text(
+                    'Save',
+                    style: PalletTextStyles.titleMedium
+                        .copyWith(color: PalletColors.cCyan600),
+                  ),
+                ),
+              ],
+            ));
   }
 }
 
