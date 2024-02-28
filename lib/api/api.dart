@@ -92,7 +92,12 @@ class APIs {
     return await firestore
         .collection('users')
         .doc(user.uid)
-        .set(chatUser.toJson());
+        .set(chatUser.toJson())
+        .then((value) => firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('my_users')
+            .add({'id': user.uid}));
   }
 
   static Future<void> sendFirstMessage(
